@@ -232,7 +232,8 @@
     <!-- Final Video View -->
     <div class="video-container" id="videoContainer">
       <h2>Thank you for your participation! 🎉</h2>
-      <video controls autoplay muted>
+      <!-- تم إزالة muted من الفيديو -->
+      <video id="thankyouVideo" controls playsinline>
         <source src="thankyou_video.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
@@ -274,7 +275,6 @@
     let currentIndex = 0;
     const yesBtn = document.getElementById('yesBtn');
 
-    // تحريك زر YES إلى نقطة عشوائية داخل حدود الشاشة
     function moveYesButton() {
       const btnWidth = 120;
       const btnHeight = 55;
@@ -291,14 +291,12 @@
       yesBtn.style.top = `${randomY}px`;
     }
 
-    // إرجاع زر YES إلى وضع بجانب NO
     function resetYesButtonPosition() {
       yesBtn.classList.remove('runaway');
       yesBtn.style.left = 'auto';
       yesBtn.style.top = 'auto';
     }
 
-    // الهروب يطبق من السؤال الثاني إلى الأخير (currentIndex > 0)
     function handleTrigger(e) {
       if (currentIndex > 0) {
         if (e.type === 'touchstart') {
@@ -346,10 +344,19 @@
     function showFinalVideo() {
       document.getElementById('quizContent').style.display = 'none';
       document.getElementById('videoContainer').style.display = 'block';
+      
+      // إطلاق المؤثرات البصرية
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 }
+      });
+
+      // تشغيل الفيديو بالصوت بعد التفاعل مع الأسئلة
+      const video = document.getElementById('thankyouVideo');
+      video.muted = false;
+      video.play().catch(err => {
+        console.log("Autoplay with audio blocked:", err);
       });
     }
   </script>
