@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Voting - Creativity Generation Schools</title>
-  <!-- Google Fonts & Canvas Confetti -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -19,199 +18,36 @@
       --no-color: #d9534f;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    body {
-      background: var(--bg-gradient);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Header & Logos */
-    .header {
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-
-    .logo {
-      height: 70px;
-      object-fit: contain;
-      filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
-    }
-
-    /* Container Card */
-    .quiz-card {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 600px;
-      border-radius: 20px;
-      padding: 35px 30px;
-      box-shadow: 0 15px 35px rgba(10, 92, 83, 0.12);
-      border-top: 6px solid var(--accent-gold);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s ease;
-    }
-
-    /* Progress Bar */
-    .progress-container {
-      width: 100%;
-      background-color: #e0e0e0;
-      height: 10px;
-      border-radius: 20px;
-      margin-bottom: 25px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 10%;
-      background: linear-gradient(90deg, var(--primary-color), var(--accent-gold));
-      transition: width 0.4s ease;
-      border-radius: 20px;
-    }
-
-    .question-number {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--accent-gold);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-
-    /* Animated Question Container */
-    .question-box {
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-      transform: translateY(0);
-      transition: all 0.3s ease;
-    }
-
-    .question-box.fade-out {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-
-    .question-text {
-      font-size: 1.35rem;
-      color: var(--text-dark);
-      text-align: center;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-
-    /* Buttons */
-    .options-container {
-      display: flex;
-      gap: 20px;
-      margin-top: 30px;
-      position: relative;
-      min-height: 60px;
-    }
-
-    .btn-option {
-      flex: 1;
-      padding: 16px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: white;
-      transition: background-color 0.25s ease, box-shadow 0.25s ease;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    }
-
-    .btn-yes {
-      background-color: var(--yes-color);
-      z-index: 999;
-    }
-
-    .btn-yes:hover {
-      background-color: #07433c;
-      box-shadow: 0 8px 20px rgba(10, 92, 83, 0.3);
-    }
-
-    /* هرب الزر بسرعة واهتزازه المستمر للإغراء */
-    .btn-yes.runaway {
-      position: fixed !important;
-      transition: top 0.12s ease-out, left 0.12s ease-out !important;
-      width: 120px !important;
-      height: 55px !important;
-      padding: 0 !important;
-      animation: temptShake 0.4s infinite alternate ease-in-out;
-    }
-
-    @keyframes temptShake {
-      0% { transform: scale(1) rotate(0deg); }
-      25% { transform: scale(1.1) rotate(-8deg); }
-      50% { transform: scale(1.15) rotate(8deg); }
-      75% { transform: scale(1.1) rotate(-5deg); }
-      100% { transform: scale(1.05) rotate(5deg); }
-    }
-
-    .btn-no {
-      background-color: var(--no-color);
-    }
-
-    .btn-no:hover {
-      background-color: #b53b37;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(217, 83, 79, 0.3);
-    }
-
-    /* Video Box */
-    .video-container {
-      display: none;
-      text-align: center;
-      animation: fadeIn 0.8s ease forwards;
-    }
-
-    .video-container h2 {
-      color: var(--primary-color);
-      margin-bottom: 15px;
-    }
-
-    video {
-      width: 100%;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: var(--bg-gradient); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+    .header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .logo { height: 70px; object-fit: contain; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
+    .quiz-card { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 20px; padding: 35px 30px; box-shadow: 0 15px 35px rgba(10, 92, 83, 0.12); border-top: 6px solid var(--accent-gold); }
+    .progress-container { width: 100%; background-color: #e0e0e0; height: 10px; border-radius: 20px; margin-bottom: 25px; overflow: hidden; }
+    .progress-bar { height: 100%; width: 10%; background: linear-gradient(90deg, var(--primary-color), var(--accent-gold)); transition: width 0.4s ease; border-radius: 20px; }
+    .question-number { font-size: 0.9rem; font-weight: 700; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .question-box { min-height: 120px; display: flex; align-items: center; justify-content: center; opacity: 1; transform: translateY(0); transition: all 0.3s ease; }
+    .question-box.fade-out { opacity: 0; transform: translateY(-20px); }
+    .question-text { font-size: 1.35rem; color: var(--text-dark); text-align: center; font-weight: 600; line-height: 1.5; }
+    .options-container { display: flex; gap: 20px; margin-top: 30px; }
+    .btn-option { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 700; cursor: pointer; color: white; transition: all 0.25s ease; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+    .btn-yes { background-color: var(--yes-color); }
+    .btn-yes:hover { background-color: #07433c; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(10, 92, 83, 0.3); }
+    .btn-no { background-color: var(--no-color); }
+    .btn-no:hover { background-color: #b53b37; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(217, 83, 79, 0.3); }
+    .video-container { display: none; text-align: center; animation: fadeIn 0.8s ease forwards; }
+    .video-container h2 { color: var(--primary-color); margin-bottom: 15px; }
+    video { width: 100%; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
 
-  <!-- Header Section with Logos -->
   <div class="header">
     <img src="logo_creativity.png" alt="Creativity Generation Schools Logo" class="logo">
     <img src="logo_cognia.png" alt="Cognia Logo" class="logo">
   </div>
 
-  <!-- Voting Card -->
   <div class="quiz-card" id="quizCard">
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
@@ -223,16 +59,14 @@
         <h2 class="question-text" id="questionText">Was your academic major your own choice?</h2>
       </div>
 
-      <div class="options-container" id="optionsContainer">
-        <button class="btn-option btn-yes" id="yesBtn" onclick="submitVote('yes')">YES</button>
-        <button class="btn-option btn-no" id="noBtn" onclick="submitVote('no')">NO</button>
+      <div class="options-container">
+        <button class="btn-option btn-yes" onclick="submitVote('yes')">YES</button>
+        <button class="btn-option btn-no" onclick="submitVote('no')">NO</button>
       </div>
     </div>
 
-    <!-- Final Video View -->
     <div class="video-container" id="videoContainer">
       <h2>Thank you for your participation! 🎉</h2>
-      <!-- تم إزالة muted من الفيديو -->
       <video id="thankyouVideo" controls playsinline>
         <source src="thankyou_video.mp4" type="video/mp4">
         Your browser does not support the video tag.
@@ -240,7 +74,6 @@
     </div>
   </div>
 
-  <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -273,45 +106,8 @@
     ];
 
     let currentIndex = 0;
-    const yesBtn = document.getElementById('yesBtn');
-
-    function moveYesButton() {
-      const btnWidth = 120;
-      const btnHeight = 55;
-      const margin = 20;
-
-      const maxX = window.innerWidth - btnWidth - margin;
-      const maxY = window.innerHeight - btnHeight - margin;
-
-      const randomX = Math.max(margin, Math.floor(Math.random() * maxX));
-      const randomY = Math.max(margin, Math.floor(Math.random() * maxY));
-
-      yesBtn.classList.add('runaway');
-      yesBtn.style.left = `${randomX}px`;
-      yesBtn.style.top = `${randomY}px`;
-    }
-
-    function resetYesButtonPosition() {
-      yesBtn.classList.remove('runaway');
-      yesBtn.style.left = 'auto';
-      yesBtn.style.top = 'auto';
-    }
-
-    function handleTrigger(e) {
-      if (currentIndex > 0) {
-        if (e.type === 'touchstart') {
-          e.preventDefault();
-        }
-        moveYesButton();
-      }
-    }
-
-    yesBtn.addEventListener('mouseover', handleTrigger);
-    yesBtn.addEventListener('touchstart', handleTrigger, { passive: false });
 
     window.submitVote = function(option) {
-      resetYesButtonPosition();
-
       const qKey = `q${currentIndex + 1}`;
       const voteRef = ref(db, `votes/${qKey}/${option}`);
 
@@ -328,8 +124,6 @@
 
       setTimeout(() => {
         currentIndex++;
-        resetYesButtonPosition();
-
         if (currentIndex < questions.length) {
           document.getElementById('questionText').innerText = questions[currentIndex];
           document.getElementById('questionNum').innerText = `Question ${currentIndex + 1} of 10`;
@@ -345,19 +139,11 @@
       document.getElementById('quizContent').style.display = 'none';
       document.getElementById('videoContainer').style.display = 'block';
       
-      // إطلاق المؤثرات البصرية
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
-      // تشغيل الفيديو بالصوت بعد التفاعل مع الأسئلة
       const video = document.getElementById('thankyouVideo');
       video.muted = false;
-      video.play().catch(err => {
-        console.log("Autoplay with audio blocked:", err);
-      });
+      video.play().catch(err => console.log("Autoplay handled:", err));
     }
   </script>
 </body>
