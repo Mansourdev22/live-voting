@@ -4,128 +4,156 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Results - Creativity Generation Schools</title>
-  <!-- Chart.js & Google Fonts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+  
+  <!-- مكتبة Chart.js والمكون الإضافي للنسب المئوية -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  
   <style>
     :root {
       --primary-color: #0a5c53;
       --accent-gold: #cfa851;
       --bg-gradient: linear-gradient(135deg, #f4f8f7 0%, #e6efed 100%);
-      --card-bg: #ffffff;
-      --text-dark: #2c3e50;
-      --yes-color: #0a5c53;
-      --no-color: #d9534f;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background: var(--bg-gradient); min-height: 100vh; padding: 30px 20px; color: var(--text-dark); }
+    body { background: var(--bg-gradient); padding: 20px 15px; color: #2c3e50; }
 
-    /* Top Navigation / Navigation Actions */
-    .top-bar { max-width: 1200px; margin: 0 auto 20px; display: flex; justify-content: flex-end; }
-    .btn-dashboard {
-      background-color: var(--accent-gold);
-      color: white;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      box-shadow: 0 4px 12px rgba(207, 168, 81, 0.3);
-      transition: all 0.3s ease;
-      display: inline-flex;
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
     }
-    .btn-dashboard:hover {
-      background-color: #b89343;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(207, 168, 81, 0.4);
+    .logo { height: 65px; object-fit: contain; }
+
+    .title-box {
+      text-align: center;
+      margin-bottom: 25px;
     }
+    .title-box h1 { color: var(--primary-color); font-size: 2rem; }
+    .title-box p { color: var(--accent-gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
 
-    /* Header Section */
-    .header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
-    .logo { height: 75px; object-fit: contain; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
-    .page-title { text-align: center; color: var(--primary-color); font-size: 1.8rem; font-weight: 700; }
-
-    /* Cards Grid Layout */
+    /* شبكة 5 كروت في الصف */
     .results-grid {
-      max-width: 1200px;
-      margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
-    .question-card {
-      background: var(--card-bg);
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: 0 10px 25px rgba(10, 92, 83, 0.08);
-      border-top: 5px solid var(--primary-color);
+    @media (max-width: 1200px) {
+      .results-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .results-grid { grid-template-columns: repeat(1, 1fr); }
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--accent-gold);
       display: flex;
       flex-direction: column;
+      align-items: center;
       justify-content: space-between;
     }
 
-    .q-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text-dark);
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      min-height: 40px;
+      color: var(--primary-color);
+      line-height: 1.3;
       text-align: center;
-      margin-bottom: 15px;
-      min-height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .chart-container {
       position: relative;
-      height: 220px;
       width: 100%;
+      max-width: 190px;
+      height: 190px;
     }
 
-    .stats-footer {
+    /* حاوي الأزرار أسفل الصفحة */
+    .footer-control {
+      text-align: center;
+      margin-top: 40px;
+      margin-bottom: 20px;
       display: flex;
-      justify-content: space-around;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #edf2f7;
-      font-weight: 700;
-      font-size: 0.95rem;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    .stat-yes { color: var(--yes-color); }
-    .stat-no { color: var(--no-color); }
+    .btn-control {
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-btn {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(10, 92, 83, 0.25);
+    }
+    .dashboard-btn:hover {
+      background-color: #07433c;
+      transform: translateY(-2px);
+    }
+
+    .reset-btn {
+      background-color: #d9534f;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);
+    }
+    .reset-btn:hover {
+      background-color: #c9302c;
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Action Button -->
-  <div class="top-bar">
-    <a href="dashboard.html" class="btn-dashboard">
-      📊 Open Executive Dashboard →
-    </a>
-  </div>
-
-  <!-- Header Section with Logos -->
   <div class="header">
-    <img src="logo_creativity.png" alt="Creativity Generation Schools Logo" class="logo">
-    <h1 class="page-title">Live Voting Results</h1>
+    <img src="logo_creativity.png" alt="Creativity Generation Schools" class="logo">
     <img src="logo_cognia.png" alt="Cognia Logo" class="logo">
   </div>
 
-  <!-- Grid Container for Questions -->
-  <div class="results-grid" id="gridContainer">
-    <!-- 10 Chart Cards dynamically generated -->
+  <div class="title-box">
+    <p>Live Dashboard</p>
+    <h1>Voting Results Overview</h1>
   </div>
 
-  <!-- Firebase Realtime Logic -->
+  <div class="results-grid" id="resultsGrid"></div>
+
+  <!-- الأزرار التفاعلية في أسفل الصفحة -->
+  <div class="footer-control">
+    <a href="dashboard.html" class="btn-control dashboard-btn">Go to Dashboard 📊</a>
+    <button class="btn-control reset-btn" id="resetBtn">Reset All Votes</button>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // تسجيل إضافة ChartDataLabels لإظهار النسبة على الشارت
+    Chart.register(ChartDataLabels);
 
     const firebaseConfig = {
       apiKey: "AIzaSyBCZ6VNFF7EMIXQupKOpDQwNPeCd9xPhiM",
@@ -154,73 +182,84 @@
       "Do you have a special talent?"
     ];
 
+    const grid = document.getElementById('resultsGrid');
     const charts = {};
 
-    // 1. Build Grid structure HTML
-    const gridContainer = document.getElementById('gridContainer');
-    questions.forEach((qText, index) => {
-      const qIndex = index + 1;
+    questions.forEach((q, i) => {
       const card = document.createElement('div');
-      card.className = 'question-card';
+      card.className = 'card';
       card.innerHTML = `
-        <div class="q-title">Q${qIndex}. ${qText}</div>
+        <div class="card-title">${i + 1}. ${q}</div>
         <div class="chart-container">
-          <canvas id="chart_q${qIndex}"></canvas>
-        </div>
-        <div class="stats-footer">
-          <span class="stat-yes">YES: <span id="val_yes_q${qIndex}">0</span></span>
-          <span class="stat-no">NO: <span id="val_no_q${qIndex}">0</span></span>
+          <canvas id="chart-q${i+1}"></canvas>
         </div>
       `;
-      gridContainer.appendChild(card);
-    });
+      grid.appendChild(card);
 
-    // 2. Initialize Pie Charts
-    questions.forEach((_, index) => {
-      const qIndex = index + 1;
-      const ctx = document.getElementById(`chart_q${qIndex}`).getContext('2d');
-      charts[`q${qIndex}`] = new Chart(ctx, {
+      const ctx = document.getElementById(`chart-q${i+1}`).getContext('2d');
+      charts[`q${i+1}`] = new Chart(ctx, {
         type: 'pie',
         data: {
           labels: ['YES', 'NO'],
           datasets: [{
             data: [0, 0],
             backgroundColor: ['#0a5c53', '#d9534f'],
-            borderWidth: 2,
-            borderColor: '#ffffff'
+            borderWidth: 1
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            datalabels: {
+              color: '#ffffff',
+              font: { weight: 'bold', size: 12 },
+              formatter: (value, ctx) => {
+                const dataset = ctx.chart.data.datasets[0];
+                const total = dataset.data.reduce((acc, val) => acc + val, 0);
+                if (total === 0 || value === 0) return '';
+                const percentage = Math.round((value / total) * 100);
+                return `${percentage}%`;
+              }
+            }
           }
         }
       });
     });
 
-    // 3. Listen to Firebase Realtime Database
     const votesRef = ref(db, 'votes');
     onValue(votesRef, (snapshot) => {
       const data = snapshot.val() || {};
+      
+      questions.forEach((_, i) => {
+        const qKey = `q${i + 1}`;
+        const yesVotes = data[qKey]?.yes || 0;
+        const noVotes = data[qKey]?.no || 0;
 
-      questions.forEach((_, index) => {
-        const qKey = `q${index + 1}`;
-        const yesVal = data[qKey]?.yes || 0;
-        const noVal = data[qKey]?.no || 0;
-
-        // Update UI text values
-        document.getElementById(`val_yes_${qKey}`).innerText = yesVal;
-        document.getElementById(`val_no_${qKey}`).innerText = noVal;
-
-        // Update Chart
         const chart = charts[qKey];
         if (chart) {
-          chart.data.datasets[0].data = [yesVal, noVal];
+          chart.data.datasets[0].data = [yesVotes, noVotes];
           chart.update();
         }
       });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm("Are you sure you want to reset all voting data to zero?")) {
+        const resetData = {};
+        questions.forEach((_, i) => {
+          resetData[`q${i + 1}`] = { yes: 0, no: 0 };
+        });
+        set(votesRef, resetData).then(() => {
+          alert("All votes have been reset successfully!");
+        }).catch((err) => {
+          alert("Error resetting votes: " + err.message);
+        });
+      }
     });
   </script>
 </body>
