@@ -36,12 +36,12 @@
     .title-box h1 { color: var(--primary-color); font-size: 2rem; }
     .title-box p { color: var(--accent-gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
 
-    /* شبكة 5 كروت في الصف */
+    /* شبكة 5 أعمدة بالضبط لضمان عرض 5 أسئلة في الصف الأول و5 في الثاني */
     .results-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 15px;
-      max-width: 1400px;
+      max-width: 1450px;
       margin: 0 auto;
     }
 
@@ -78,27 +78,28 @@
     .chart-container {
       position: relative;
       width: 100%;
-      max-width: 190px;
-      height: 190px;
+      max-width: 180px;
+      height: 180px;
     }
 
-    /* حاوي الأزرار أسفل الصفحة */
+    /* أزرار التحكم في أسفل الصفحة */
     .footer-control {
       text-align: center;
       margin-top: 40px;
       margin-bottom: 20px;
       display: flex;
       justify-content: center;
-      gap: 15px;
+      align-items: center;
+      gap: 20px;
       flex-wrap: wrap;
     }
 
     .btn-control {
       border: none;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
@@ -110,21 +111,23 @@
     .dashboard-btn {
       background-color: var(--primary-color);
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(10, 92, 83, 0.25);
+      box-shadow: 0 4px 15px rgba(10, 92, 83, 0.25);
     }
     .dashboard-btn:hover {
       background-color: #07433c;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(10, 92, 83, 0.35);
     }
 
     .reset-btn {
       background-color: #d9534f;
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);
+      box-shadow: 0 4px 15px rgba(217, 83, 79, 0.25);
     }
     .reset-btn:hover {
       background-color: #c9302c;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(217, 83, 79, 0.35);
     }
   </style>
 </head>
@@ -140,9 +143,10 @@
     <h1>Voting Results Overview</h1>
   </div>
 
+  <!-- شبكة النتائج: 5 في الصف الأول و5 في الصف الثاني -->
   <div class="results-grid" id="resultsGrid"></div>
 
-  <!-- الأزرار التفاعلية في أسفل الصفحة -->
+  <!-- أزرار التحكم أسفل الصفحة -->
   <div class="footer-control">
     <a href="dashboard.html" class="btn-control dashboard-btn">Go to Dashboard 📊</a>
     <button class="btn-control reset-btn" id="resetBtn">Reset All Votes</button>
@@ -152,7 +156,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // تسجيل إضافة ChartDataLabels لإظهار النسبة على الشارت
     Chart.register(ChartDataLabels);
 
     const firebaseConfig = {
