@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Analytics Dashboard - Creativity Generation Schools</title>
+  <!-- Chart.js & Fonts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #0a5c53;
+      --accent-gold: #cfa851;
+      --bg-color: #f4f8f7;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --yes-color: #0a5c53;
+      --no-color: #d9534f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-dark); padding: 30px 20px; }
+
+    .header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { height: 65px; object-fit: contain; }
+    .title-box { text-align: center; }
+    .title-box h1 { font-size: 1.8rem; color: var(--primary-color); }
+    .title-box p { color: #7f8c8d; font-size: 0.95rem; }
+
+    .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px; }
+
+    /* KPI Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .kpi-card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-color); }
+    .kpi-card.gold { border-left-color: var(--accent-gold); }
+    .kpi-title { font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d; font-weight: 700; }
+    .kpi-value { font-size: 2.2rem; font-weight: 700; color: var(--text-dark); margin-top: 5px; }
+
+    /* Main Chart Card */
+    .chart-card { background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .chart-title { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
+
+    /* Table Section */
+    .table-card { background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 15px; border-bottom: 2px solid #edf2f7; color: var(--primary-color); font-size: 0.9rem; }
+    td { padding: 15px; border-bottom: 1px solid #edf2f7; font-size: 0.95rem; }
+    
+    .progress-bar-bg { background: #edf2f7; height: 10px; border-radius: 10px; overflow: hidden; display: flex; width: 100%; margin-top: 5px; }
+    .progress-yes { background: var(--yes-color); height: 100%; }
+    .progress-no { background: var(--no-color); height: 100%; }
+    
+    .badge { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; color: white; }
+    .badge-yes { background: var(--yes-color); }
+    .badge-no { background: var(--no-color); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="logo_creativity.png" alt="Creativity Logo" class="logo">
+    <div class="title-box">
+      <h1>Executive Analytics Dashboard</h1>
+      <p>Real-time survey metrics & participation insights</p>
+    </div>
+    <img src="logo_cognia.png" alt="Cognia Logo" class="logo">
+  </div>
+
+  <div class="container">
+    <!-- KPI Summary Row -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Total Participants (Approx)</div>
+        <div class="kpi-value" id="kpiParticipants">0</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="kpi-title">Total Votes Submitted</div>
+        <div class="kpi-value" id="kpiTotalVotes">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Overall Positivity Rate</div>
+        <div class="kpi-value" id="kpiPositivity">0%</div>
+      </div>
+    </div>
+
+    <!-- Main Comparison Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Overall Questions Response Breakdown</span>
+      </div>
+      <div style="height: 380px;">
+        <canvas id="stackedChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Detailed Breakdown Table -->
+    <div class="table-card">
+      <div class="chart-header">
+        <span class="chart-title">Question-by-Question Detailed Analysis</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 5%;">#</th>
+            <th style="width: 45%;">Question Text</th>
+            <th style="width: 15%;">YES Votes</th>
+            <th style="width: 15%;">NO Votes</th>
+            <th style="width: 20%;">Visual Distribution</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Rows inserted dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCZ6VNFF7EMIXQupKOpDQwNPeCd9xPhiM",
+      authDomain: "live-voting-app-e4569.firebaseapp.com",
+      databaseURL: "https://live-voting-app-e4569-default-rtdb.firebaseio.com",
+      projectId: "live-voting-app-e4569",
+      storageBucket: "live-voting-app-e4569.firebasestorage.app",
+      messagingSenderId: "736380741973",
+      appId: "1:736380741973:web:2df55912219d70b8a2e7dc",
+      measurementId: "G-70Z8ZGYPVV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const questions = [
+      "Was your academic major your own choice?",
+      "Is teaching your chosen career?",
+      "Do you enjoy the educational stage you are currently teaching?",
+      "Do you believe in your mission as an educator?",
+      "Were you a quiet student in school?",
+      "Were you a student who preferred sitting in the back?",
+      "Were you a social student?",
+      "Were you a student council member?",
+      "Do you believe in multiple intelligences?",
+      "Do you have a special talent?"
+    ];
+
+    let chartInstance = null;
+
+    function initChart() {
+      const ctx = document.getElementById('stackedChart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: questions.map((_, i) => `Q${i+1}`),
+          datasets: [
+            { label: 'YES', data: Array(10).fill(0), backgroundColor: '#0a5c53', borderRadius: 6 },
+            { label: 'NO', data: Array(10).fill(0), backgroundColor: '#d9534f', borderRadius: 6 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { stacked: true },
+            y: { stacked: true, beginAtZero: true }
+          },
+          plugins: {
+            legend: { position: 'top' }
+          }
+        }
+      });
+    }
+
+    initChart();
+
+    // Realtime Listener
+    const votesRef = ref(db, 'votes');
+    onValue(votesRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      let totalYesAll = 0;
+      let totalNoAll = 0;
+      let maxVotesInSingleQ = 0;
+
+      const yesArr = [];
+      const noArr = [];
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+
+      questions.forEach((qText, index) => {
+        const qKey = `q${index + 1}`;
+        const yesCount = data[qKey]?.yes || 0;
+        const noCount = data[qKey]?.no || 0;
+        const totalQVotes = yesCount + noCount;
+
+        totalYesAll += yesCount;
+        totalNoAll += noCount;
+        if (totalQVotes > maxVotesInSingleQ) maxVotesInSingleQ = totalQVotes;
+
+        yesArr.push(yesCount);
+        noArr.push(noCount);
+
+        const yesPct = totalQVotes > 0 ? ((yesCount / totalQVotes) * 100).toFixed(0) : 0;
+        const noPct = totalQVotes > 0 ? ((noCount / totalQVotes) * 100).toFixed(0) : 0;
+
+        // Populate Table
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>Q${index + 1}</strong></td>
+          <td>${qText}</td>
+          <td><span class="badge badge-yes">${yesCount}</span> (${yesPct}%)</td>
+          <td><span class="badge badge-no">${noCount}</span> (${noPct}%)</td>
+          <td>
+            <div class="progress-bar-bg">
+              <div class="progress-yes" style="width: ${yesPct}%;"></div>
+              <div class="progress-no" style="width: ${noPct}%;"></div>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      // Update KPI
+      const grandTotalVotes = totalYesAll + totalNoAll;
+      const overallPositivity = grandTotalVotes > 0 ? ((totalYesAll / grandTotalVotes) * 100).toFixed(1) : 0;
+
+      document.getElementById('kpiParticipants').innerText = maxVotesInSingleQ;
+      document.getElementById('kpiTotalVotes').innerText = grandTotalVotes;
+      document.getElementById('kpiPositivity').innerText = `${overallPositivity}%`;
+
+      // Update Chart
+      chartInstance.data.datasets[0].data = yesArr;
+      chartInstance.data.datasets[1].data = noArr;
+      chartInstance.update();
+    });
+  </script>
+</body>
+</html>
