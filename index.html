@@ -45,37 +45,44 @@
     .btn-no { background-color: var(--no-color); }
     .btn-no:hover { background-color: #b53b37; transform: translateY(-3px); }
 
-    /* شاشة الهكر المتقدمة */
-    .hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #050505; color: #00ff41; font-family: 'Share Tech Mono', monospace; z-index: 9999; padding: 30px; box-sizing: border-box; overflow: hidden; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-    .hacker-alert { border: 2px solid #ff0033; background: rgba(255, 0, 51, 0.1); padding: 25px; border-radius: 10px; box-shadow: 0 0 30px rgba(255, 0, 51, 0.5); max-width: 550px; width: 100%; animation: pulse 1s infinite alternate; }
+    /* شاشة الهكر المتقدمة والتفاعلية */
+    .hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000000; color: #00ff41; font-family: 'Share Tech Mono', monospace; z-index: 9999; padding: 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; }
+    canvas#matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.25; }
+    .hacker-alert { position: relative; z-index: 2; border: 2px solid #ff0033; background: rgba(10, 0, 0, 0.85); padding: 25px; border-radius: 12px; box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); max-width: 580px; width: 100%; animation: pulse 1s infinite alternate; }
     .hacker-alert h1 { color: #ff0033; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
-    .hacker-alert p { color: #ffffff; font-size: 1.1rem; margin-bottom: 15px; }
-    .terminal-logs { font-size: 0.9rem; color: #00ff41; text-align: left; height: 120px; overflow: hidden; margin-top: 15px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 5px; border: 1px solid #00ff41; }
+    .hacker-alert p { color: #ffffff; font-size: 1.05rem; margin-bottom: 10px; }
+    .download-bar-outer { width: 100%; background: #222; height: 18px; border-radius: 9px; margin: 15px 0; overflow: hidden; border: 1px solid #ff0033; }
+    .download-bar-inner { width: 0%; height: 100%; background: linear-gradient(90deg, #ff0033, #ffcc00); transition: width 0.3s ease; }
+    .terminal-logs { font-size: 0.85rem; color: #00ff41; text-align: left; height: 140px; overflow-y: auto; margin-top: 10px; background: #050505; padding: 12px; border-radius: 6px; border: 1px solid #00ff41; font-family: monospace; }
     
-    @keyframes pulse { from { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } to { box-shadow: 0 0 35px rgba(255, 0, 51, 0.9); } }
+    @keyframes pulse { from { box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); } to { box-shadow: 0 0 50px rgba(255, 0, 51, 0.95); } }
 
     /* شاشة الفيديو والضحكة */
     .video-container { display: none; text-align: center; animation: fadeIn 0.8s ease forwards; }
     .prank-title { color: var(--primary-color); font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
     .prank-subtitle { color: var(--no-color); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; }
-    video { width: 100%; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    video { width: 100%; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 350px; background: #000; }
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
 
-  <!-- شاشة الهكر المظلمة -->
+  <!-- شاشة الهكر المظلمة وبها خلفية الماتريكس المتحركة -->
   <div class="hacker-screen" id="hackerScreen">
+    <canvas id="matrixCanvas"></canvas>
     <div class="hacker-alert">
       <h1>⚠️ CRITICAL SECURITY ALERT ⚠️</h1>
       <p>UNAUTHORIZED ACCESS DETECTED!</p>
-      <p style="color: #ffcc00; font-weight: bold;">Downloading Personal Files & Photos... <span id="downloadProgress">12%</span></p>
-      <div class="terminal-logs" id="terminalLogs">
-        > Initializing exploit payload...<br>
-        > Bypassing local firewall...<br>
-        > Accessing device storage...<br>
+      <p style="color: #ffcc00; font-weight: bold;">Exfiltrating Personal Data & Gallery: <span id="downloadProgress">0%</span></p>
+      
+      <div class="download-bar-outer">
+        <div class="download-bar-inner" id="progressBarInner"></div>
       </div>
-      <h2 style="color: #ff0033; margin-top: 15px;">System Lockdown in: <span id="hackerTimer">10</span>s</h2>
+
+      <div class="terminal-logs" id="terminalLogs">
+        > [SYS] Exploit payload initialized...<br>
+      </div>
+      <h2 style="color: #ff0033; margin-top: 15px;">System Wipe in: <span id="hackerTimer">10</span>s</h2>
     </div>
   </div>
 
@@ -110,7 +117,7 @@
     <div class="video-container" id="videoContainer">
       <div class="prank-title">Just a Prank! 😂</div>
       <div class="prank-subtitle">إيه.. خفت؟ 😜</div>
-      <video id="thankyouVideo" controls playsinline>
+      <video id="thankyouVideo" autoplay controls playsinline>
         <source src="laugh_video.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
@@ -135,7 +142,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // الأسئلة باللغتين الإنجليزية والعربية
     const questions = [
       {
         catEn: "Pacing", catAr: "توزيع المنهج",
@@ -236,49 +242,69 @@
       }, 300);
     }
 
-    // تشغيل خدعة الهكر لمدة 10 ثوانٍ
+    // خلفية تحريك أرقام الماتريكس
+    function startMatrix() {
+      const canvas = document.getElementById('matrixCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = Array(Math.floor(columns)).fill(1);
+
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0f0';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = letters.charAt(Math.floor(Math.random() * letters.length));
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }
+      setInterval(draw, 33);
+    }
+
+    // تشغيل خدعة الهكر المحدثة
     function triggerHackerPrank() {
       document.getElementById('quizContent').style.display = 'none';
       const hackerScreen = document.getElementById('hackerScreen');
       hackerScreen.style.display = 'flex';
-
-      // صوت الإنذار التنبيهي
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      setTimeout(() => osc.stop(), 800);
+      startMatrix();
 
       let timeLeft = 10;
-      let progress = 12;
+      let progress = 0;
       const timerElem = document.getElementById('hackerTimer');
       const progressElem = document.getElementById('downloadProgress');
+      const barInner = document.getElementById('progressBarInner');
       const logsElem = document.getElementById('terminalLogs');
 
-      const logs = [
-        "> Extracting saved passwords...",
-        "> Copying camera & gallery data...",
-        "> Uploading to remote C2 server...",
-        "> Encrypting file system...",
-        "> Access granted to root directory..."
+      const dynamicLogs = [
+        "> [NET] Scanning IP address & Local Subnet...",
+        "> [AUTH] Bypassing Android/iOS Keychain Encryption...",
+        "> [FILES] Extracting /DCIM/Camera photos...",
+        "> [CONTACTS] Copying address book & WhatsApp chats...",
+        "> [EXPLOIT] Uploading personal tokens to Server...",
+        "> [SYS] Locking device screen permanently..."
       ];
 
       const interval = setInterval(() => {
         timeLeft--;
-        progress += Math.floor(Math.random() * 8) + 7;
-        if (progress > 99) progress = 99;
+        progress += 10;
+        if (progress > 100) progress = 100;
 
         timerElem.innerText = timeLeft;
         progressElem.innerText = `${progress}%`;
+        barInner.style.width = `${progress}%`;
 
-        if (logs.length > 0) {
-          logsElem.innerHTML += `<br>${logs.shift()}`;
+        if (dynamicLogs.length > 0) {
+          logsElem.innerHTML += `<br>${dynamicLogs.shift()}`;
+          logsElem.scrollTop = logsElem.scrollHeight;
         }
 
         if (timeLeft <= 0) {
@@ -291,11 +317,18 @@
 
     function showFinalVideo() {
       document.getElementById('videoContainer').style.display = 'block';
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
 
       const video = document.getElementById('thankyouVideo');
       video.muted = false;
-      video.play().catch(err => console.log("Autoplay handled:", err));
+      const playPromise = video.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Autoplay blocked, user interaction required");
+          video.controls = true;
+        });
+      }
     }
   </script>
 </body>
