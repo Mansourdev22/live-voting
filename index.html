@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Voting - Creativity Generation Schools</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -19,32 +19,72 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background: var(--bg-gradient); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-    .header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .logo { height: 70px; object-fit: contain; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
-    .quiz-card { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 20px; padding: 35px 30px; box-shadow: 0 15px 35px rgba(10, 92, 83, 0.12); border-top: 6px solid var(--accent-gold); }
+    body { background: var(--bg-gradient); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: background 0.5s ease; }
+    
+    .top-bar { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .lang-btn { background: var(--primary-color); color: #fff; border: 2px solid var(--accent-gold); padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+    .lang-btn:hover { background: #07433c; transform: scale(1.05); }
+
+    .header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .logo { height: 65px; object-fit: contain; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1)); }
+    
+    .quiz-card { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 20px; padding: 35px 30px; box-shadow: 0 15px 35px rgba(10, 92, 83, 0.12); border-top: 6px solid var(--accent-gold); position: relative; }
     .progress-container { width: 100%; background-color: #e0e0e0; height: 10px; border-radius: 20px; margin-bottom: 25px; overflow: hidden; }
-    .progress-bar { height: 100%; width: 10%; background: linear-gradient(90deg, var(--primary-color), var(--accent-gold)); transition: width 0.4s ease; border-radius: 20px; }
-    .question-number { font-size: 0.9rem; font-weight: 700; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-    .question-box { min-height: 120px; display: flex; align-items: center; justify-content: center; opacity: 1; transform: translateY(0); transition: all 0.3s ease; }
+    .progress-bar { height: 100%; width: 10%; background: linear-gradient(90deg, var(--primary-color), var(--accent-gold)); transition: width 0.4s ease; }
+    
+    .question-category { font-size: 0.85rem; font-weight: 700; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+    .question-number { font-size: 0.9rem; font-weight: 600; color: #7f8c8d; margin-bottom: 10px; }
+    .question-box { min-height: 120px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
     .question-box.fade-out { opacity: 0; transform: translateY(-20px); }
-    .question-text { font-size: 1.35rem; color: var(--text-dark); text-align: center; font-weight: 600; line-height: 1.5; }
+    .question-text { font-size: 1.25rem; color: var(--text-dark); text-align: center; font-weight: 600; line-height: 1.5; }
+    
     .options-container { display: flex; gap: 20px; margin-top: 30px; }
     .btn-option { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 700; cursor: pointer; color: white; transition: all 0.25s ease; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
     .btn-yes { background-color: var(--yes-color); }
-    .btn-yes:hover { background-color: #07433c; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(10, 92, 83, 0.3); }
+    .btn-yes:hover { background-color: #07433c; transform: translateY(-3px); }
     .btn-no { background-color: var(--no-color); }
-    .btn-no:hover { background-color: #b53b37; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(217, 83, 79, 0.3); }
+    .btn-no:hover { background-color: #b53b37; transform: translateY(-3px); }
+
+    /* شاشة الهكر المتقدمة */
+    .hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #050505; color: #00ff41; font-family: 'Share Tech Mono', monospace; z-index: 9999; padding: 30px; box-sizing: border-box; overflow: hidden; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .hacker-alert { border: 2px solid #ff0033; background: rgba(255, 0, 51, 0.1); padding: 25px; border-radius: 10px; box-shadow: 0 0 30px rgba(255, 0, 51, 0.5); max-width: 550px; width: 100%; animation: pulse 1s infinite alternate; }
+    .hacker-alert h1 { color: #ff0033; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+    .hacker-alert p { color: #ffffff; font-size: 1.1rem; margin-bottom: 15px; }
+    .terminal-logs { font-size: 0.9rem; color: #00ff41; text-align: left; height: 120px; overflow: hidden; margin-top: 15px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 5px; border: 1px solid #00ff41; }
+    
+    @keyframes pulse { from { box-shadow: 0 0 15px rgba(255, 0, 51, 0.4); } to { box-shadow: 0 0 35px rgba(255, 0, 51, 0.9); } }
+
+    /* شاشة الفيديو والضحكة */
     .video-container { display: none; text-align: center; animation: fadeIn 0.8s ease forwards; }
-    .video-container h2 { color: var(--primary-color); margin-bottom: 15px; }
+    .prank-title { color: var(--primary-color); font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
+    .prank-subtitle { color: var(--no-color); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; }
     video { width: 100%; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
 
+  <!-- شاشة الهكر المظلمة -->
+  <div class="hacker-screen" id="hackerScreen">
+    <div class="hacker-alert">
+      <h1>⚠️ CRITICAL SECURITY ALERT ⚠️</h1>
+      <p>UNAUTHORIZED ACCESS DETECTED!</p>
+      <p style="color: #ffcc00; font-weight: bold;">Downloading Personal Files & Photos... <span id="downloadProgress">12%</span></p>
+      <div class="terminal-logs" id="terminalLogs">
+        > Initializing exploit payload...<br>
+        > Bypassing local firewall...<br>
+        > Accessing device storage...<br>
+      </div>
+      <h2 style="color: #ff0033; margin-top: 15px;">System Lockdown in: <span id="hackerTimer">10</span>s</h2>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">🌐 العربية</button>
+  </div>
+
   <div class="header">
-    <img src="logo_creativity.png" alt="Creativity Generation Schools Logo" class="logo">
+    <img src="logo_creativity.png" alt="Creativity Generation Schools" class="logo">
     <img src="logo_cognia.png" alt="Cognia Logo" class="logo">
   </div>
 
@@ -54,21 +94,24 @@
     </div>
 
     <div id="quizContent">
+      <div class="question-category" id="questionCategory">Pacing</div>
       <div class="question-number" id="questionNum">Question 1 of 10</div>
       <div class="question-box" id="questionBox">
-        <h2 class="question-text" id="questionText">Was your academic major your own choice?</h2>
+        <h2 class="question-text" id="questionText">Have you ever realized mid-year that you spent too much time on one unit and had to rush through another?</h2>
       </div>
 
       <div class="options-container">
-        <button class="btn-option btn-yes" onclick="submitVote('yes')">YES</button>
-        <button class="btn-option btn-no" onclick="submitVote('no')">NO</button>
+        <button class="btn-option btn-yes" id="btnYes" onclick="submitVote('yes')">YES</button>
+        <button class="btn-option btn-no" id="btnNo" onclick="submitVote('no')">NO</button>
       </div>
     </div>
 
+    <!-- شاشة الفيديو والمزحة -->
     <div class="video-container" id="videoContainer">
-      <h2>Thank you for your participation! 🎉</h2>
+      <div class="prank-title">Just a Prank! 😂</div>
+      <div class="prank-subtitle">إيه.. خفت؟ 😜</div>
       <video id="thankyouVideo" controls playsinline>
-        <source src="thankyou_video.mp4" type="video/mp4">
+        <source src="laugh_video.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
     </div>
@@ -92,20 +135,79 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // الأسئلة باللغتين الإنجليزية والعربية
     const questions = [
-      "Was your academic major your own choice?",
-      "Is teaching your chosen career?",
-      "Do you enjoy the educational stage you are currently teaching?",
-      "Do you believe in your mission as an educator?",
-      "Were you a quiet student in school?",
-      "Were you a student who preferred sitting in the back?",
-      "Were you a social student?",
-      "Were you a student council member?",
-      "Do you believe in multiple intelligences?",
-      "Do you have a special talent?"
+      {
+        catEn: "Pacing", catAr: "توزيع المنهج",
+        en: "Have you ever realized mid-year that you spent too much time on one unit and had to rush through another?",
+        ar: "هل اكتشفت في منتصف العام أنك قضيت وقتًا طويلاً في وحدة واحدة واضطررت للإسراع في وحدة أخرى؟"
+      },
+      {
+        catEn: "Prior Knowledge", catAr: "المعرفة السابقة",
+        en: "Do you know precisely which specific skills your current students were taught in your subject area last year?",
+        ar: "هل تعرف بالتحديد المهارات التي تم تدريسها لطلابك الحاليين في مادتك العام الماضي؟"
+      },
+      {
+        catEn: "Redundancy", catAr: "التكرار",
+        en: "Have you ever taught a project or topic only to find out students already did the exact same thing in a previous grade?",
+        ar: "هل قمت بتدريس مشروع أو موضوع لتكتشف أن الطلاب قد نفذوا نفس الشيء تمامًا في صف سابق؟"
+      },
+      {
+        catEn: "Continuity", catAr: "الاستمرارية",
+        en: "If a substitute or new colleague took over your class tomorrow, could they easily follow your year-long instructional roadmap?",
+        ar: "إذا استلم زميل جديد أو معلم بديل فصلك غدًا، هل يمكنه بسهولة اتباع خطتك التعليمية للعام كاملًا؟"
+      },
+      {
+        catEn: "Horizontal Alignment", catAr: "التوافق الأفقي",
+        en: "Do you and your grade-level or department peers teach the core standards at roughly the same pace?",
+        ar: "هل تدرس أنت وزملائك في نفس الصف أو القسم المعايير الأساسية بنفس الوتيرة تقريبًا؟"
+      },
+      {
+        catEn: "Curriculum Gaps", catAr: "فجوات المنهج",
+        en: "Have you ever discovered a critical prerequisite skill missing across your entire class that wasn't covered prior?",
+        ar: "هل اكتشفت وجود مهارة أساسية مفقودة لدى الفصل بأكمله لم يتم تغطيتها مسبقًا؟"
+      },
+      {
+        catEn: "Living Resources", catAr: "المصادر التفاعلية",
+        en: "Is your current syllabus or unit overview something you actively edit and adapt throughout the school year?",
+        ar: "هل المنهج الحالي أو نظرة الوحدة العامة شيء تقوم بتعديله وتكييفه بفعالية على مدار العام؟"
+      },
+      {
+        catEn: "Assessment Alignment", catAr: "مواءمة التقييم",
+        en: "Do you feel confident that every daily assessment directly feeds into your larger end-of-year target outcomes?",
+        ar: "هل تشعر بالثقة في أن كل تقييم يومي يصب مباشرة في مخرجات التعلم المستهدفة لنهاية العام؟"
+      },
+      {
+        catEn: "Teacher Isolation", catAr: "العزلة التدريسية",
+        en: "Have you ever felt like you were planning in a silo without fully seeing what happens in other classrooms or subjects?",
+        ar: "هل شعرت من قبل أنك تخطط بشكل منفرد دون رؤية ما يحدث في الفصول أو المواد الأخرى؟"
+      },
+      {
+        catEn: "Efficiency", catAr: "الكفاءة",
+        en: "Would you like a centralized system that saves you planning time by clarifying what to teach and when?",
+        ar: "هل ترغب في نظام مركزي يوفر عليك وقت التخطيط ويوضح ماذا تدرس ومتى؟"
+      }
     ];
 
     let currentIndex = 0;
+    let currentLang = 'en';
+
+    window.toggleLanguage = function() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      document.getElementById('langBtn').innerText = currentLang === 'en' ? '🌐 العربية' : '🌐 English';
+      document.getElementById('btnYes').innerText = currentLang === 'en' ? 'YES' : 'نعم';
+      document.getElementById('btnNo').innerText = currentLang === 'en' ? 'NO' : 'لا';
+      updateQuestionUI();
+    };
+
+    function updateQuestionUI() {
+      const q = questions[currentIndex];
+      document.getElementById('questionCategory').innerText = currentLang === 'en' ? q.catEn : q.catAr;
+      document.getElementById('questionText').innerText = currentLang === 'en' ? q.en : q.ar;
+      document.getElementById('questionNum').innerText = currentLang === 'en' 
+        ? `Question ${currentIndex + 1} of 10` 
+        : `السؤال ${currentIndex + 1} من 10`;
+    }
 
     window.submitVote = function(option) {
       const qKey = `q${currentIndex + 1}`;
@@ -125,21 +227,71 @@
       setTimeout(() => {
         currentIndex++;
         if (currentIndex < questions.length) {
-          document.getElementById('questionText').innerText = questions[currentIndex];
-          document.getElementById('questionNum').innerText = `Question ${currentIndex + 1} of 10`;
+          updateQuestionUI();
           document.getElementById('progressBar').style.width = `${((currentIndex + 1) / 10) * 100}%`;
           box.classList.remove('fade-out');
         } else {
-          showFinalVideo();
+          triggerHackerPrank();
         }
       }, 300);
     }
 
-    function showFinalVideo() {
+    // تشغيل خدعة الهكر لمدة 10 ثوانٍ
+    function triggerHackerPrank() {
       document.getElementById('quizContent').style.display = 'none';
+      const hackerScreen = document.getElementById('hackerScreen');
+      hackerScreen.style.display = 'flex';
+
+      // صوت الإنذار التنبيهي
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      setTimeout(() => osc.stop(), 800);
+
+      let timeLeft = 10;
+      let progress = 12;
+      const timerElem = document.getElementById('hackerTimer');
+      const progressElem = document.getElementById('downloadProgress');
+      const logsElem = document.getElementById('terminalLogs');
+
+      const logs = [
+        "> Extracting saved passwords...",
+        "> Copying camera & gallery data...",
+        "> Uploading to remote C2 server...",
+        "> Encrypting file system...",
+        "> Access granted to root directory..."
+      ];
+
+      const interval = setInterval(() => {
+        timeLeft--;
+        progress += Math.floor(Math.random() * 8) + 7;
+        if (progress > 99) progress = 99;
+
+        timerElem.innerText = timeLeft;
+        progressElem.innerText = `${progress}%`;
+
+        if (logs.length > 0) {
+          logsElem.innerHTML += `<br>${logs.shift()}`;
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          hackerScreen.style.display = 'none';
+          showFinalVideo();
+        }
+      }, 1000);
+    }
+
+    function showFinalVideo() {
       document.getElementById('videoContainer').style.display = 'block';
-      
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
 
       const video = document.getElementById('thankyouVideo');
       video.muted = false;
