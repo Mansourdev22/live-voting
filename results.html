@@ -36,7 +36,7 @@
     .title-box h1 { color: var(--primary-color); font-size: 2rem; }
     .title-box p { color: var(--accent-gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
 
-    /* شبكة 5 أعمدة بالضبط لضمان عرض 5 أسئلة في الصف الأول و5 في الثاني */
+    /* شبكة 5 أعمدة بالضبط (صفين كل صف 5 أسئلة) */
     .results-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -66,10 +66,10 @@
     }
 
     .card-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       margin-bottom: 10px;
-      min-height: 40px;
+      min-height: 48px;
       color: var(--primary-color);
       line-height: 1.3;
       text-align: center;
@@ -78,8 +78,8 @@
     .chart-container {
       position: relative;
       width: 100%;
-      max-width: 180px;
-      height: 180px;
+      max-width: 170px;
+      height: 170px;
     }
 
     /* أزرار التحكم في أسفل الصفحة */
@@ -143,10 +143,10 @@
     <h1>Voting Results Overview</h1>
   </div>
 
-  <!-- شبكة النتائج: 5 في الصف الأول و5 في الصف الثاني -->
+  <!-- شبكة النتائج: صفين، كل صف 5 أسئلة -->
   <div class="results-grid" id="resultsGrid"></div>
 
-  <!-- أزرار التحكم أسفل الصفحة -->
+  <!-- الأزرار أسفل الصفحة -->
   <div class="footer-control">
     <a href="dashboard.html" class="btn-control dashboard-btn">Go to Dashboard 📊</a>
     <button class="btn-control reset-btn" id="resetBtn">Reset All Votes</button>
@@ -172,17 +172,18 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // قائمة الأسئلة الجديدة المحدثة
     const questions = [
-      "Was your academic major your own choice?",
-      "Is teaching your chosen career?",
-      "Do you enjoy the educational stage you are currently teaching?",
-      "Do you believe in your mission as an educator?",
-      "Were you a quiet student in school?",
-      "Were you a student who preferred sitting in the back?",
-      "Were you a social student?",
-      "Were you a student council member?",
-      "Do you believe in multiple intelligences?",
-      "Do you have a special talent?"
+      "Pacing: Have you ever realized mid-year that you spent too much time on one unit?",
+      "Prior Knowledge: Do you know precisely which specific skills students were taught last year?",
+      "Redundancy: Have you ever taught a topic only to find students already did it?",
+      "Continuity: Could a new colleague easily follow your year-long instructional roadmap?",
+      "Horizontal Alignment: Do you and your department teach core standards at roughly the same pace?",
+      "Curriculum Gaps: Have you discovered a critical prerequisite skill missing across your class?",
+      "Living Resources: Is your current syllabus something you actively edit throughout the year?",
+      "Assessment Alignment: Does every daily assessment feed into end-of-year outcomes?",
+      "Teacher Isolation: Have you ever felt like you were planning in a silo?",
+      "Efficiency: Would you like a centralized system that saves you planning time?"
     ];
 
     const grid = document.getElementById('resultsGrid');
