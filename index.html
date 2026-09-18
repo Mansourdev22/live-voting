@@ -47,15 +47,15 @@
 
     /* شاشة الهكر المتقدمة والتفاعلية */
     .hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000000; color: #00ff41; font-family: 'Share Tech Mono', monospace; z-index: 9999; padding: 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; }
-    canvas#matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.25; }
-    .hacker-alert { position: relative; z-index: 2; border: 2px solid #ff0033; background: rgba(10, 0, 0, 0.85); padding: 25px; border-radius: 12px; box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); max-width: 580px; width: 100%; animation: pulse 1s infinite alternate; }
+    canvas#matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.6; }
+    .hacker-alert { position: relative; z-index: 2; border: 3px solid #ff0033; background: rgba(10, 0, 0, 0.9); padding: 25px; border-radius: 12px; box-shadow: 0 0 50px rgba(255, 0, 51, 0.9); max-width: 580px; width: 100%; animation: pulse 0.5s infinite alternate; }
     .hacker-alert h1 { color: #ff0033; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
     .hacker-alert p { color: #ffffff; font-size: 1.05rem; margin-bottom: 10px; }
     .download-bar-outer { width: 100%; background: #222; height: 18px; border-radius: 9px; margin: 15px 0; overflow: hidden; border: 1px solid #ff0033; }
-    .download-bar-inner { width: 0%; height: 100%; background: linear-gradient(90deg, #ff0033, #ffcc00); transition: width 0.3s ease; }
+    .download-bar-inner { width: 0%; height: 100%; background: linear-gradient(90deg, #ff0033, #ffcc00); transition: width 0.2s ease; }
     .terminal-logs { font-size: 0.85rem; color: #00ff41; text-align: left; height: 140px; overflow-y: auto; margin-top: 10px; background: #050505; padding: 12px; border-radius: 6px; border: 1px solid #00ff41; font-family: monospace; }
     
-    @keyframes pulse { from { box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); } to { box-shadow: 0 0 50px rgba(255, 0, 51, 0.95); } }
+    @keyframes pulse { from { box-shadow: 0 0 20px rgba(255, 0, 51, 0.5); transform: scale(0.99); } to { box-shadow: 0 0 60px rgba(255, 0, 51, 1); transform: scale(1.01); } }
 
     /* شاشة الفيديو والضحكة */
     .video-container { display: none; text-align: center; animation: fadeIn 0.8s ease forwards; }
@@ -82,7 +82,7 @@
       <div class="terminal-logs" id="terminalLogs">
         > [SYS] Exploit payload initialized...<br>
       </div>
-      <h2 style="color: #ff0033; margin-top: 15px;">System Wipe in: <span id="hackerTimer">10</span>s</h2>
+      <h2 style="color: #ff0033; margin-top: 15px;">System Wipe in: <span id="hackerTimer">5</span>s</h2>
     </div>
   </div>
 
@@ -242,42 +242,72 @@
       }, 300);
     }
 
-    // خلفية تحريك أرقام الماتريكس
+    // خلفية تحريك أرقام الماتريكس بسرعة عالية للغاية
     function startMatrix() {
       const canvas = document.getElementById('matrixCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
-      const fontSize = 14;
+      const letters = '0101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+      const fontSize = 16;
       const columns = canvas.width / fontSize;
       const drops = Array(Math.floor(columns)).fill(1);
 
       function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#0f0';
-        ctx.font = fontSize + 'px monospace';
+        ctx.fillStyle = '#00ff41';
+        ctx.font = 'bold ' + fontSize + 'px monospace';
 
         for (let i = 0; i < drops.length; i++) {
           const text = letters.charAt(Math.floor(Math.random() * letters.length));
           ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-          drops[i]++;
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.9) drops[i] = 0;
+          drops[i] += 2; // زيادة السرعة مضاعفة
         }
       }
-      setInterval(draw, 33);
+      setInterval(draw, 15); // سرعة إطار عالية جداً
     }
 
-    // تشغيل خدعة الهكر المحدثة
+    // تشغيل صوت إنذار طوارئ مزعج ومتردد
+    function playAlarmSound() {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      const playBeep = () => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        
+        // ترددات متناوبة تشبه إنذار الشرطة/السرقة
+        osc.frequency.setValueAtTime(950, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      };
+
+      // تكرار الصوت المزعج كل 200 ملي ثانية
+      const alarmInterval = setInterval(playBeep, 200);
+      return { audioCtx, alarmInterval };
+    }
+
+    // تشغيل خدعة الهكر المحدثة لمدة 5 ثوانٍ
     function triggerHackerPrank() {
       document.getElementById('quizContent').style.display = 'none';
       const hackerScreen = document.getElementById('hackerScreen');
       hackerScreen.style.display = 'flex';
       startMatrix();
 
-      let timeLeft = 10;
+      const alertAudio = playAlarmSound();
+
+      let timeLeft = 5;
       let progress = 0;
       const timerElem = document.getElementById('hackerTimer');
       const progressElem = document.getElementById('downloadProgress');
@@ -285,17 +315,17 @@
       const logsElem = document.getElementById('terminalLogs');
 
       const dynamicLogs = [
-        "> [NET] Scanning IP address & Local Subnet...",
-        "> [AUTH] Bypassing Android/iOS Keychain Encryption...",
-        "> [FILES] Extracting /DCIM/Camera photos...",
-        "> [CONTACTS] Copying address book & WhatsApp chats...",
-        "> [EXPLOIT] Uploading personal tokens to Server...",
-        "> [SYS] Locking device screen permanently..."
+        "> [NET] Bypassing Local Subnet Firewall...",
+        "> [AUTH] Bypassing iOS/Android Keychain Security...",
+        "> [FILES] Copying /DCIM/Camera photos & gallery...",
+        "> [CONTACTS] Exfiltrating Address book & WhatsApp...",
+        "> [EXPLOIT] Uploading tokens to remote C2 Server...",
+        "> [SYS] Permanent Device Lock Command Executed..."
       ];
 
       const interval = setInterval(() => {
         timeLeft--;
-        progress += 10;
+        progress += 20;
         if (progress > 100) progress = 100;
 
         timerElem.innerText = timeLeft;
@@ -304,11 +334,15 @@
 
         if (dynamicLogs.length > 0) {
           logsElem.innerHTML += `<br>${dynamicLogs.shift()}`;
+          if (dynamicLogs.length > 0) logsElem.innerHTML += `<br>${dynamicLogs.shift()}`;
           logsElem.scrollTop = logsElem.scrollHeight;
         }
 
         if (timeLeft <= 0) {
           clearInterval(interval);
+          clearInterval(alertAudio.alarmInterval); // إيقاف صوت الإنذار
+          alertAudio.audioCtx.close();
+          
           hackerScreen.style.display = 'none';
           showFinalVideo();
         }
