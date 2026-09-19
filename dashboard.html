@@ -3,118 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Analytics Dashboard - Creativity Generation Schools</title>
-  <!-- Chart.js & Fonts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Executive Dashboard - Creativity Generation Schools</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root {
       --primary-color: #0a5c53;
       --accent-gold: #cfa851;
-      --bg-color: #f4f8f7;
+      --bg-gradient: linear-gradient(135deg, #f4f8f7 0%, #e6efed 100%);
       --card-bg: #ffffff;
       --text-dark: #2c3e50;
-      --yes-color: #0a5c53;
-      --no-color: #d9534f;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-dark); padding: 30px 20px; }
+    body { background: var(--bg-gradient); padding: 25px 20px; color: var(--text-dark); min-height: 100vh; overflow-x: hidden; position: relative; }
 
-    .header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
+    .header { max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
     .logo { height: 65px; object-fit: contain; }
-    .title-box { text-align: center; }
-    .title-box h1 { font-size: 1.8rem; color: var(--primary-color); }
-    .title-box p { color: #7f8c8d; font-size: 0.95rem; }
 
-    .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px; }
+    .dashboard-title { text-align: center; margin-bottom: 25px; }
+    .dashboard-title h1 { color: var(--primary-color); font-size: 2.2rem; font-weight: 700; }
+    .dashboard-title p { color: var(--accent-gold); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
 
-    /* KPI Cards */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .kpi-card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-color); }
-    .kpi-card.gold { border-left-color: var(--accent-gold); }
-    .kpi-title { font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d; font-weight: 700; }
-    .kpi-value { font-size: 2.2rem; font-weight: 700; color: var(--text-dark); margin-top: 5px; }
+    /* بطاقات الإحصائيات السريعة */
+    .kpi-container { max-width: 1400px; margin: 0 auto 25px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .kpi-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(10, 92, 83, 0.08); border-left: 6px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; }
+    .kpi-info h3 { font-size: 0.9rem; color: #7f8c8d; text-transform: uppercase; font-weight: 600; }
+    .kpi-info p { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin-top: 5px; }
+    .kpi-icon { font-size: 2.5rem; }
 
-    /* Main Chart Card */
-    .chart-card { background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .chart-title { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
+    /* شبكة الرسوم البيانية */
+    .charts-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+    .chart-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color); }
+    .chart-card h2 { font-size: 1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; line-height: 1.4; }
+    .chart-wrapper { position: relative; width: 100%; height: 250px; }
 
-    /* Table Section */
-    .table-card { background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { padding: 15px; border-bottom: 2px solid #edf2f7; color: var(--primary-color); font-size: 0.9rem; }
-    td { padding: 15px; border-bottom: 1px solid #edf2f7; font-size: 0.95rem; }
+    .back-btn-container { text-align: center; margin-top: 35px; }
+    .btn-back { background: var(--primary-color); color: #fff; text-decoration: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; display: inline-block; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(10, 92, 83, 0.2); }
+    .btn-back:hover { background: #07433c; transform: translateY(-2px); }
+
+    /* ================= ANIME / MASCOT ANIMATIONS ================= */
+    .mascot { position: fixed; bottom: 20px; font-size: 90px; z-index: 9999; pointer-events: none; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease; opacity: 0; }
     
-    .progress-bar-bg { background: #edf2f7; height: 10px; border-radius: 10px; overflow: hidden; display: flex; width: 100%; margin-top: 5px; }
-    .progress-yes { background: var(--yes-color); height: 100%; }
-    .progress-no { background: var(--no-color); height: 100%; }
-    
-    .badge { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; color: white; }
-    .badge-yes { background: var(--yes-color); }
-    .badge-no { background: var(--no-color); }
+    /* ظهور من اليمين ويؤشر */
+    .mascot-right { right: -120px; transform: translateX(0); }
+    .mascot-right.show-wave { opacity: 1; transform: translateX(-140px); animation: waveHand 0.8s infinite alternate; }
+
+    /* ظهور من اليسار ويؤشر */
+    .mascot-left { left: -120px; transform: translateX(0); }
+    .mascot-left.show-wave { opacity: 1; transform: translateX(140px); animation: waveHand 0.8s infinite alternate; }
+
+    /* الجري عبر الشاشة */
+    .mascot-runner { left: -150px; bottom: 40px; opacity: 0; }
+    .mascot-runner.run-across { opacity: 1; animation: runAcrossScreen 3.5s linear forwards; }
+
+    @keyframes waveHand {
+      0% { transform: translateX(-140px) rotate(0deg); }
+      100% { transform: translateX(-140px) rotate(-15deg); }
+    }
+
+    @keyframes runAcrossScreen {
+      0% { left: -150px; transform: scaleX(1); }
+      100% { left: 100vw; transform: scaleX(1); }
+    }
   </style>
 </head>
 <body>
 
+  <!-- شخصية الأنيمي / المبتكر المتحركة -->
+  <div id="mascotRight" class="mascot mascot-right">🙋‍♂️🏻‍♂️</div>
+  <div id="mascotLeft" class="mascot mascot-left">🙋‍♂️🏻‍♂️</div>
+  <div id="mascotRunner" class="mascot mascot-runner">🏃‍♂️💨</div>
+
   <div class="header">
-    <img src="logo_creativity.png" alt="Creativity Logo" class="logo">
-    <div class="title-box">
-      <h1>Executive Analytics Dashboard</h1>
-      <p>Real-time survey metrics & participation insights</p>
-    </div>
+    <img src="logo_creativity.png" alt="Creativity Generation Schools" class="logo">
     <img src="logo_cognia.png" alt="Cognia Logo" class="logo">
   </div>
 
-  <div class="container">
-    <!-- KPI Summary Row -->
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-title">Total Participants (Approx)</div>
-        <div class="kpi-value" id="kpiParticipants">0</div>
-      </div>
-      <div class="kpi-card gold">
-        <div class="kpi-title">Total Votes Submitted</div>
-        <div class="kpi-value" id="kpiTotalVotes">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Overall Positivity Rate</div>
-        <div class="kpi-value" id="kpiPositivity">0%</div>
-      </div>
-    </div>
+  <div class="dashboard-title">
+    <p>Real-Time Analytics</p>
+    <h1>Curriculum Alignment Dashboard</h1>
+  </div>
 
-    <!-- Main Comparison Chart -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <span class="chart-title">Overall Questions Response Breakdown</span>
+  <!-- KPI Cards -->
+  <div class="kpi-container">
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <h3>Total Submissions</h3>
+        <p id="totalVotes">0</p>
       </div>
-      <div style="height: 380px;">
-        <canvas id="stackedChart"></canvas>
-      </div>
+      <div class="kpi-icon">📊</div>
     </div>
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <h3>Highest Consensus</h3>
+        <p id="highestConsensus">-</p>
+      </div>
+      <div class="kpi-icon">🎯</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <h3>Active Survey Modules</h3>
+        <p>10 / 10</p>
+      </div>
+      <div class="kpi-icon">✅</div>
+    </div>
+  </div>
 
-    <!-- Detailed Breakdown Table -->
-    <div class="table-card">
-      <div class="chart-header">
-        <span class="chart-title">Question-by-Question Detailed Analysis</span>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 5%;">#</th>
-            <th style="width: 45%;">Question Text</th>
-            <th style="width: 15%;">YES Votes</th>
-            <th style="width: 15%;">NO Votes</th>
-            <th style="width: 20%;">Visual Distribution</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <!-- Rows inserted dynamically -->
-        </tbody>
-      </table>
-    </div>
+  <!-- Charts Grid -->
+  <div class="charts-grid" id="chartsGrid"></div>
+
+  <div class="back-btn-container">
+    <a href="results.html" class="btn-back">⬅️ Back to Results Page</a>
   </div>
 
   <script type="module">
@@ -136,106 +137,115 @@
     const db = getDatabase(app);
 
     const questions = [
-      "Was your academic major your own choice?",
-      "Is teaching your chosen career?",
-      "Do you enjoy the educational stage you are currently teaching?",
-      "Do you believe in your mission as an educator?",
-      "Were you a quiet student in school?",
-      "Were you a student who preferred sitting in the back?",
-      "Were you a social student?",
-      "Were you a student council member?",
-      "Do you believe in multiple intelligences?",
-      "Do you have a special talent?"
+      "1. Pacing & Time Allocation",
+      "2. Prior Knowledge Awareness",
+      "3. Redundancy & Repetition",
+      "4. Instructional Continuity",
+      "5. Horizontal Grade Alignment",
+      "6. Curriculum Gaps Identified",
+      "7. Active Syllabus Adaptation",
+      "8. Assessment Alignment",
+      "9. Planning Isolation (Silo)",
+      "10. System Efficiency Need"
     ];
 
-    let chartInstance = null;
+    const grid = document.getElementById('chartsGrid');
+    const charts = {};
 
-    function initChart() {
-      const ctx = document.getElementById('stackedChart').getContext('2d');
-      chartInstance = new Chart(ctx, {
+    questions.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.className = 'chart-card';
+      card.innerHTML = `
+        <h2>${q}</h2>
+        <div class="chart-wrapper">
+          <canvas id="dashChart-q${i+1}"></canvas>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      const ctx = document.getElementById(`dashChart-q${i+1}`).getContext('2d');
+      charts[`q${i+1}`] = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: questions.map((_, i) => `Q${i+1}`),
-          datasets: [
-            { label: 'YES', data: Array(10).fill(0), backgroundColor: '#0a5c53', borderRadius: 6 },
-            { label: 'NO', data: Array(10).fill(0), backgroundColor: '#d9534f', borderRadius: 6 }
-          ]
+          labels: ['YES', 'NO'],
+          datasets: [{
+            label: 'Votes',
+            data: [0, 0],
+            backgroundColor: ['#0a5c53', '#d9534f'],
+            borderRadius: 8
+          }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
           scales: {
-            x: { stacked: true },
-            y: { stacked: true, beginAtZero: true }
-          },
-          plugins: {
-            legend: { position: 'top' }
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
           }
         }
       });
-    }
+    });
 
-    initChart();
-
-    // Realtime Listener
+    // تحديث البيانات المباشرة
     const votesRef = ref(db, 'votes');
     onValue(votesRef, (snapshot) => {
       const data = snapshot.val() || {};
-      let totalYesAll = 0;
-      let totalNoAll = 0;
-      let maxVotesInSingleQ = 0;
+      let grandTotal = 0;
+      let maxVotes = -1;
+      let topCategory = "-";
 
-      const yesArr = [];
-      const noArr = [];
-      const tableBody = document.getElementById('tableBody');
-      tableBody.innerHTML = '';
+      questions.forEach((q, i) => {
+        const qKey = `q${i + 1}`;
+        const yesVotes = data[qKey]?.yes || 0;
+        const noVotes = data[qKey]?.no || 0;
+        const qTotal = yesVotes + noVotes;
 
-      questions.forEach((qText, index) => {
-        const qKey = `q${index + 1}`;
-        const yesCount = data[qKey]?.yes || 0;
-        const noCount = data[qKey]?.no || 0;
-        const totalQVotes = yesCount + noCount;
+        grandTotal += qTotal;
 
-        totalYesAll += yesCount;
-        totalNoAll += noCount;
-        if (totalQVotes > maxVotesInSingleQ) maxVotesInSingleQ = totalQVotes;
+        if (qTotal > maxVotes && qTotal > 0) {
+          maxVotes = qTotal;
+          topCategory = q.split('.')[1];
+        }
 
-        yesArr.push(yesCount);
-        noArr.push(noCount);
-
-        const yesPct = totalQVotes > 0 ? ((yesCount / totalQVotes) * 100).toFixed(0) : 0;
-        const noPct = totalQVotes > 0 ? ((noCount / totalQVotes) * 100).toFixed(0) : 0;
-
-        // Populate Table
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>Q${index + 1}</strong></td>
-          <td>${qText}</td>
-          <td><span class="badge badge-yes">${yesCount}</span> (${yesPct}%)</td>
-          <td><span class="badge badge-no">${noCount}</span> (${noPct}%)</td>
-          <td>
-            <div class="progress-bar-bg">
-              <div class="progress-yes" style="width: ${yesPct}%;"></div>
-              <div class="progress-no" style="width: ${noPct}%;"></div>
-            </div>
-          </td>
-        `;
-        tableBody.appendChild(tr);
+        const chart = charts[qKey];
+        if (chart) {
+          chart.data.datasets[0].data = [yesVotes, noVotes];
+          chart.update();
+        }
       });
 
-      // Update KPI
-      const grandTotalVotes = totalYesAll + totalNoAll;
-      const overallPositivity = grandTotalVotes > 0 ? ((totalYesAll / grandTotalVotes) * 100).toFixed(1) : 0;
-
-      document.getElementById('kpiParticipants').innerText = maxVotesInSingleQ;
-      document.getElementById('kpiTotalVotes').innerText = grandTotalVotes;
-      document.getElementById('kpiPositivity').innerText = `${overallPositivity}%`;
-
-      // Update Chart
-      chartInstance.data.datasets[0].data = yesArr;
-      chartInstance.data.datasets[1].data = noArr;
-      chartInstance.update();
+      document.getElementById('totalVotes').innerText = grandTotal;
+      document.getElementById('highestConsensus').innerText = topCategory;
     });
+
+    // ================= سيناريو حركات الشخصية الموقوتة =================
+    
+    // 1. بعد دقيقة (60 ثانية): يظهر من اليمين ويؤشر لمدة 5 ثوانٍ ثم يختفي
+    setTimeout(() => {
+      const mascotRight = document.getElementById('mascotRight');
+      mascotRight.classList.add('show-wave');
+
+      setTimeout(() => {
+        mascotRight.classList.remove('show-wave');
+      }, 5000);
+    }, 60000);
+
+    // 2. بعد 20 ثانية إضافية (أي عند الدقيقة 1:20): يظهر من اليسار ويؤشر لمدة 5 ثوانٍ ثم يختفي
+    setTimeout(() => {
+      const mascotLeft = document.getElementById('mascotLeft');
+      mascotLeft.classList.add('show-wave');
+
+      setTimeout(() => {
+        mascotLeft.classList.remove('show-wave');
+      }, 5000);
+    }, 80000);
+
+    // 3. بعد دقيقة كاملة إضافية (أي عند الدقيقة 2:20): يجري من اليسار إلى اليمين الشاشة بالكامل
+    setTimeout(() => {
+      const mascotRunner = document.getElementById('mascotRunner');
+      mascotRunner.classList.add('run-across');
+    }, 140000);
+
   </script>
 </body>
 </html>
