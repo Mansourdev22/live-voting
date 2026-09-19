@@ -248,4 +248,254 @@
 
   </script>
 </body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Dashboard - Creativity Generation Schools</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #0a5c53;
+      --accent-gold: #cfa851;
+      --bg-gradient: linear-gradient(135deg, #f4f8f7 0%, #e6efed 100%);
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: var(--bg-gradient); padding: 25px 20px; color: var(--text-dark); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+    .header { max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { height: 65px; object-fit: contain; }
+
+    .dashboard-title { text-align: center; margin-bottom: 25px; }
+    .dashboard-title h1 { color: var(--primary-color); font-size: 2.2rem; font-weight: 700; }
+    .dashboard-title p { color: var(--accent-gold); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+
+    /* بطاقات الإحصائيات السريعة */
+    .kpi-container { max-width: 1400px; margin: 0 auto 25px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .kpi-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(10, 92, 83, 0.08); border-left: 6px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; }
+    .kpi-info h3 { font-size: 0.9rem; color: #7f8c8d; text-transform: uppercase; font-weight: 600; }
+    .kpi-info p { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin-top: 5px; }
+    .kpi-icon { font-size: 2.5rem; }
+
+    /* شبكة الرسوم البيانية */
+    .charts-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+    .chart-card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-color); }
+    .chart-card h2 { font-size: 1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; line-height: 1.4; }
+    .chart-wrapper { position: relative; width: 100%; height: 250px; }
+
+    .back-btn-container { text-align: center; margin-top: 35px; }
+    .btn-back { background: var(--primary-color); color: #fff; text-decoration: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; display: inline-block; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(10, 92, 83, 0.2); }
+    .btn-back:hover { background: #07433c; transform: translateY(-2px); }
+
+    /* ================= ANIME / MASCOT ANIMATIONS ================= */
+    .mascot { position: fixed; bottom: 20px; font-size: 90px; z-index: 9999; pointer-events: none; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease; opacity: 0; }
+    
+    /* ظهور من اليمين ويؤشر */
+    .mascot-right { right: -120px; transform: translateX(0); }
+    .mascot-right.show-wave { opacity: 1; transform: translateX(-140px); animation: waveHand 0.8s infinite alternate; }
+
+    /* ظهور من اليسار ويؤشر */
+    .mascot-left { left: -120px; transform: translateX(0); }
+    .mascot-left.show-wave { opacity: 1; transform: translateX(140px); animation: waveHand 0.8s infinite alternate; }
+
+    /* الجري عبر الشاشة */
+    .mascot-runner { left: -150px; bottom: 40px; opacity: 0; }
+    .mascot-runner.run-across { opacity: 1; animation: runAcrossScreen 3.5s linear forwards; }
+
+    @keyframes waveHand {
+      0% { transform: translateX(-140px) rotate(0deg); }
+      100% { transform: translateX(-140px) rotate(-15deg); }
+    }
+
+    @keyframes runAcrossScreen {
+      0% { left: -150px; transform: scaleX(1); }
+      100% { left: 100vw; transform: scaleX(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شخصية الأنيمي / المبتكر المتحركة -->
+  <div id="mascotRight" class="mascot mascot-right">🙋‍♂️🏻‍♂️</div>
+  <div id="mascotLeft" class="mascot mascot-left">🙋‍♂️🏻‍♂️</div>
+  <div id="mascotRunner" class="mascot mascot-runner">🏃‍♂️💨</div>
+
+  <div class="header">
+    <img src="logo_creativity.png" alt="Creativity Generation Schools" class="logo">
+    <img src="logo_cognia.png" alt="Cognia Logo" class="logo">
+  </div>
+
+  <div class="dashboard-title">
+    <p>Real-Time Analytics</p>
+    <h1>Curriculum Alignment Dashboard</h1>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-container">
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <h3>Total Submissions</h3>
+        <p id="totalVotes">0</p>
+      </div>
+      <div class="kpi-icon">📊</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <h3>Highest Consensus</h3>
+        <p id="highestConsensus">-</p>
+      </div>
+      <div class="kpi-icon">🎯</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <h3>Active Survey Modules</h3>
+        <p>10 / 10</p>
+      </div>
+      <div class="kpi-icon">✅</div>
+    </div>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="charts-grid" id="chartsGrid"></div>
+
+  <div class="back-btn-container">
+    <a href="results.html" class="btn-back">⬅️ Back to Results Page</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCZ6VNFF7EMIXQupKOpDQwNPeCd9xPhiM",
+      authDomain: "live-voting-app-e4569.firebaseapp.com",
+      databaseURL: "https://live-voting-app-e4569-default-rtdb.firebaseio.com",
+      projectId: "live-voting-app-e4569",
+      storageBucket: "live-voting-app-e4569.firebasestorage.app",
+      messagingSenderId: "736380741973",
+      appId: "1:736380741973:web:2df55912219d70b8a2e7dc",
+      measurementId: "G-70Z8ZGYPVV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const questions = [
+      "1. Pacing & Time Allocation",
+      "2. Prior Knowledge Awareness",
+      "3. Redundancy & Repetition",
+      "4. Instructional Continuity",
+      "5. Horizontal Grade Alignment",
+      "6. Curriculum Gaps Identified",
+      "7. Active Syllabus Adaptation",
+      "8. Assessment Alignment",
+      "9. Planning Isolation (Silo)",
+      "10. System Efficiency Need"
+    ];
+
+    const grid = document.getElementById('chartsGrid');
+    const charts = {};
+
+    questions.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.className = 'chart-card';
+      card.innerHTML = `
+        <h2>${q}</h2>
+        <div class="chart-wrapper">
+          <canvas id="dashChart-q${i+1}"></canvas>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      const ctx = document.getElementById(`dashChart-q${i+1}`).getContext('2d');
+      charts[`q${i+1}`] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['YES', 'NO'],
+          datasets: [{
+            label: 'Votes',
+            data: [0, 0],
+            backgroundColor: ['#0a5c53', '#d9534f'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+    });
+
+    // تحديث البيانات المباشرة
+    const votesRef = ref(db, 'votes');
+    onValue(votesRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      let grandTotal = 0;
+      let maxVotes = -1;
+      let topCategory = "-";
+
+      questions.forEach((q, i) => {
+        const qKey = `q${i + 1}`;
+        const yesVotes = data[qKey]?.yes || 0;
+        const noVotes = data[qKey]?.no || 0;
+        const qTotal = yesVotes + noVotes;
+
+        grandTotal += qTotal;
+
+        if (qTotal > maxVotes && qTotal > 0) {
+          maxVotes = qTotal;
+          topCategory = q.split('.')[1];
+        }
+
+        const chart = charts[qKey];
+        if (chart) {
+          chart.data.datasets[0].data = [yesVotes, noVotes];
+          chart.update();
+        }
+      });
+
+      document.getElementById('totalVotes').innerText = grandTotal;
+      document.getElementById('highestConsensus').innerText = topCategory;
+    });
+
+    // ================= سيناريو حركات الشخصية الموقوتة =================
+    
+    // 1. بعد دقيقة (60 ثانية): يظهر من اليمين ويؤشر لمدة 5 ثوانٍ ثم يختفي
+    setTimeout(() => {
+      const mascotRight = document.getElementById('mascotRight');
+      mascotRight.classList.add('show-wave');
+
+      setTimeout(() => {
+        mascotRight.classList.remove('show-wave');
+      }, 5000);
+    }, 60000);
+
+    // 2. بعد 20 ثانية إضافية (أي عند الدقيقة 1:20): يظهر من اليسار ويؤشر لمدة 5 ثوانٍ ثم يختفي
+    setTimeout(() => {
+      const mascotLeft = document.getElementById('mascotLeft');
+      mascotLeft.classList.add('show-wave');
+
+      setTimeout(() => {
+        mascotLeft.classList.remove('show-wave');
+      }, 5000);
+    }, 80000);
+
+    // 3. بعد دقيقة كاملة إضافية (أي عند الدقيقة 2:20): يجري من اليسار إلى اليمين الشاشة بالكامل
+    setTimeout(() => {
+      const mascotRunner = document.getElementById('mascotRunner');
+      mascotRunner.classList.add('run-across');
+    }, 140000);
+
+  </script>
+</body>
 </html>
