@@ -48,14 +48,14 @@
     /* شاشة الهكر المتقدمة والتفاعلية */
     .hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000000; color: #00ff41; font-family: 'Share Tech Mono', monospace; z-index: 9999; padding: 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; }
     canvas#matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.6; }
-    .hacker-alert { position: relative; z-index: 2; border: 3px solid #ff0033; background: rgba(10, 0, 0, 0.9); padding: 25px; border-radius: 12px; box-shadow: 0 0 50px rgba(255, 0, 51, 0.9); max-width: 580px; width: 100%; animation: pulse 0.5s infinite alternate; }
+    .hacker-alert { position: relative; z-index: 2; border: 3px solid #ff0033; background: rgba(10, 0, 0, 0.9); padding: 25px; border-radius: 12px; box-shadow: 0 0 50px rgba(255, 0, 51, 0.9); max-width: 580px; width: 100%; animation: pulse 0.3s infinite alternate; }
     .hacker-alert h1 { color: #ff0033; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
     .hacker-alert p { color: #ffffff; font-size: 1.05rem; margin-bottom: 10px; }
     .download-bar-outer { width: 100%; background: #222; height: 18px; border-radius: 9px; margin: 15px 0; overflow: hidden; border: 1px solid #ff0033; }
     .download-bar-inner { width: 0%; height: 100%; background: linear-gradient(90deg, #ff0033, #ffcc00); transition: width 0.2s ease; }
     .terminal-logs { font-size: 0.85rem; color: #00ff41; text-align: left; height: 140px; overflow-y: auto; margin-top: 10px; background: #050505; padding: 12px; border-radius: 6px; border: 1px solid #00ff41; font-family: monospace; }
     
-    @keyframes pulse { from { box-shadow: 0 0 20px rgba(255, 0, 51, 0.5); transform: scale(0.99); } to { box-shadow: 0 0 60px rgba(255, 0, 51, 1); transform: scale(1.01); } }
+    @keyframes pulse { from { box-shadow: 0 0 20px rgba(255, 0, 51, 0.5); transform: scale(0.98); } to { box-shadow: 0 0 70px rgba(255, 0, 51, 1); transform: scale(1.02); } }
 
     /* شاشة الفيديو والضحكة */
     .video-container { display: none; text-align: center; animation: fadeIn 0.8s ease forwards; }
@@ -264,38 +264,65 @@
           const text = letters.charAt(Math.floor(Math.random() * letters.length));
           ctx.fillText(text, i * fontSize, drops[i] * fontSize);
           if (drops[i] * fontSize > canvas.height && Math.random() > 0.9) drops[i] = 0;
-          drops[i] += 2; // زيادة السرعة مضاعفة
+          drops[i] += 2;
         }
       }
-      setInterval(draw, 15); // سرعة إطار عالية جداً
+      setInterval(draw, 15);
     }
 
-    // تشغيل صوت إنذار طوارئ مزعج ومتردد
-    function playAlarmSound() {
+    // تشغيل إنذار أكثر إزعاجاً وترديداً مرعباً (Siren Alarm)
+    function playExtremeAlarmSound() {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      
-      const playBeep = () => {
+
+      // إنشاء نغمة صفارة إنذار هابطة وصاعدة
+      const playSirenBurst = () => {
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc1.type = 'sawtooth'; // موجة حادة جداً
+        osc2.type = 'square';   // موجة طنين مزعج
+
+        // هبوط وصعود سريع جداً للترددات (Siren Effect)
+        osc1.frequency.setValueAtTime(1200, audioCtx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.12);
+
+        osc2.frequency.setValueAtTime(1250, audioCtx.currentTime); // اختلاف التردد يصنع نشازاً مزعجاً
+        osc2.frequency.exponentialRampToValueAtTime(450, audioCtx.currentTime + 0.12);
+
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime); // رفع مستوى الصوت
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc1.start();
+        osc2.start();
+        osc1.stop(audioCtx.currentTime + 0.12);
+        osc2.stop(audioCtx.currentTime + 0.12);
+      };
+
+      // إضافة نغمة صفير إضافية حادة جداً (High Pitched Piercing Tone)
+      const playHighBeep = () => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        
-        // ترددات متناوبة تشبه إنذار الشرطة/السرقة
-        osc.frequency.setValueAtTime(950, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.15);
-
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2800, audioCtx.currentTime); // تردد حاد ومزعج
         gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
 
         osc.connect(gain);
         gain.connect(audioCtx.destination);
 
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.15);
+        osc.stop(audioCtx.currentTime + 0.08);
       };
 
-      // تكرار الصوت المزعج كل 200 ملي ثانية
-      const alarmInterval = setInterval(playBeep, 200);
-      return { audioCtx, alarmInterval };
+      const sirenInterval = setInterval(playSirenBurst, 150); // تكرار متسارع
+      const beepInterval = setInterval(playHighBeep, 400);
+
+      return { audioCtx, sirenInterval, beepInterval };
     }
 
     // تشغيل خدعة الهكر المحدثة لمدة 10 ثوانٍ
@@ -305,7 +332,7 @@
       hackerScreen.style.display = 'flex';
       startMatrix();
 
-      const alertAudio = playAlarmSound();
+      const alertAudio = playExtremeAlarmSound();
 
       let timeLeft = 10;
       let progress = 0;
@@ -340,7 +367,8 @@
 
         if (timeLeft <= 0) {
           clearInterval(interval);
-          clearInterval(alertAudio.alarmInterval); // إيقاف صوت الإنذار
+          clearInterval(alertAudio.sirenInterval); // إيقاف صوت الإنذار الأول
+          clearInterval(alertAudio.beepInterval);  // إيقاف الصوت الحاد
           alertAudio.audioCtx.close();
           
           hackerScreen.style.display = 'none';
