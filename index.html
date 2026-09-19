@@ -82,7 +82,7 @@
       <div class="terminal-logs" id="terminalLogs">
         > [SYS] Exploit payload initialized...<br>
       </div>
-      <h2 style="color: #ff0033; margin-top: 15px;">System Wipe in: <span id="hackerTimer">5</span>s</h2>
+      <h2 style="color: #ff0033; margin-top: 15px;">System Wipe in: <span id="hackerTimer">10</span>s</h2>
     </div>
   </div>
 
@@ -298,7 +298,7 @@
       return { audioCtx, alarmInterval };
     }
 
-    // تشغيل خدعة الهكر المحدثة لمدة 5 ثوانٍ
+    // تشغيل خدعة الهكر المحدثة لمدة 10 ثوانٍ
     function triggerHackerPrank() {
       document.getElementById('quizContent').style.display = 'none';
       const hackerScreen = document.getElementById('hackerScreen');
@@ -307,7 +307,7 @@
 
       const alertAudio = playAlarmSound();
 
-      let timeLeft = 5;
+      let timeLeft = 10;
       let progress = 0;
       const timerElem = document.getElementById('hackerTimer');
       const progressElem = document.getElementById('downloadProgress');
@@ -325,7 +325,7 @@
 
       const interval = setInterval(() => {
         timeLeft--;
-        progress += 20;
+        progress += 10;
         if (progress > 100) progress = 100;
 
         timerElem.innerText = timeLeft;
