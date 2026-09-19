@@ -37,7 +37,7 @@
     .kpi-title { font-size: 0.85rem; text-transform: uppercase; color: #7f8c8d; font-weight: 700; }
     .kpi-value { font-size: 2.2rem; font-weight: 700; color: var(--text-dark); margin-top: 5px; }
 
-    /* Main Chart Card */
+    /* Chart Card */
     .chart-card { background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .chart-title { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
@@ -60,38 +60,43 @@
     .btn-back { background: var(--primary-color); color: #fff; text-decoration: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; display: inline-block; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(10, 92, 83, 0.2); }
     .btn-back:hover { background: #07433c; transform: translateY(-2px); }
 
-    /* ================= ANIME / MASCOT ANIMATIONS ================= */
-    .mascot { position: fixed; bottom: 20px; font-size: 90px; z-index: 9999; pointer-events: none; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease; opacity: 0; }
-    
-    /* ظهور من اليمين ويؤشر */
-    .mascot-right { right: -120px; transform: translateX(0); }
-    .mascot-right.show-wave { opacity: 1; transform: translateX(-140px); animation: waveHand 0.8s infinite alternate; }
-
-    /* ظهور من اليسار ويؤشر */
-    .mascot-left { left: -120px; transform: translateX(0); }
-    .mascot-left.show-wave { opacity: 1; transform: translateX(140px); animation: waveHand 0.8s infinite alternate; }
-
-    /* الجري عبر الشاشة */
-    .mascot-runner { left: -150px; bottom: 40px; opacity: 0; }
-    .mascot-runner.run-across { opacity: 1; animation: runAcrossScreen 3.5s linear forwards; }
-
-    @keyframes waveHand {
-      0% { transform: translateX(-140px) rotate(0deg); }
-      100% { transform: translateX(-140px) rotate(-15deg); }
+    /* ================= GIF ANIMATIONS STYLING ================= */
+    .gif-mascot {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      opacity: 0;
+      max-height: 180px;
+      object-fit: contain;
     }
 
-    @keyframes runAcrossScreen {
-      0% { left: -150px; transform: scaleX(1); }
-      100% { left: 100vw; transform: scaleX(1); }
+    /* ظهور من اليمين */
+    .gif-right {
+      bottom: 20px;
+      right: -200px;
+    }
+    .gif-right.show {
+      opacity: 1;
+      right: 10px;
+    }
+
+    /* ظهور من اليسار */
+    .gif-left {
+      bottom: 20px;
+      left: -200px;
+    }
+    .gif-left.show {
+      opacity: 1;
+      left: 10px;
     }
   </style>
 </head>
 <body>
 
-  <!-- شخصية الأنيمي المتحركة -->
-  <div id="mascotRight" class="mascot mascot-right">🙋‍♂️🏻‍♂️</div>
-  <div id="mascotLeft" class="mascot mascot-left">🙋‍♂️🏻‍♂️</div>
-  <div id="mascotRunner" class="mascot mascot-runner">🏃‍♂️💨</div>
+  <!-- صور الـ GIF المتحركة -->
+  <img id="gifRight" src="peeking_right.gif" alt="Waving Right" class="gif-mascot gif-right">
+  <img id="gifLeft" src="peeking_left.gif" alt="Waving Left" class="gif-mascot gif-left">
 
   <div class="header">
     <img src="logo_creativity.png" alt="Creativity Logo" class="logo">
@@ -103,7 +108,6 @@
   </div>
 
   <div class="container">
-    <!-- KPI Summary Row -->
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-title">Total Participants (Approx)</div>
@@ -119,7 +123,6 @@
       </div>
     </div>
 
-    <!-- Main Comparison Chart -->
     <div class="chart-card">
       <div class="chart-header">
         <span class="chart-title">Overall Questions Response Breakdown</span>
@@ -129,7 +132,6 @@
       </div>
     </div>
 
-    <!-- Detailed Breakdown Table -->
     <div class="table-card">
       <div class="chart-header">
         <span class="chart-title">Question-by-Question Detailed Analysis</span>
@@ -144,9 +146,7 @@
             <th style="width: 20%;">Visual Distribution</th>
           </tr>
         </thead>
-        <tbody id="tableBody">
-          <!-- Rows inserted dynamically -->
-        </tbody>
+        <tbody id="tableBody"></tbody>
       </table>
     </div>
 
@@ -173,7 +173,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // الأسئلة الـ 10 الجديدة المحدثة
     const questions = [
       "Pacing: Have you ever realized mid-year that you spent too much time on one unit?",
       "Prior Knowledge: Do you know precisely which specific skills students were taught last year?",
@@ -203,20 +202,14 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: {
-            x: { stacked: true },
-            y: { stacked: true, beginAtZero: true }
-          },
-          plugins: {
-            legend: { position: 'top' }
-          }
+          scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+          plugins: { legend: { position: 'top' } }
         }
       });
     }
 
     initChart();
 
-    // Realtime Listener
     const votesRef = ref(db, 'votes');
     onValue(votesRef, (snapshot) => {
       const data = snapshot.val() || {};
@@ -245,7 +238,6 @@
         const yesPct = totalQVotes > 0 ? ((yesCount / totalQVotes) * 100).toFixed(0) : 0;
         const noPct = totalQVotes > 0 ? ((noCount / totalQVotes) * 100).toFixed(0) : 0;
 
-        // Populate Table
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><strong>Q${index + 1}</strong></td>
@@ -262,7 +254,6 @@
         tableBody.appendChild(tr);
       });
 
-      // Update KPI
       const grandTotalVotes = totalYesAll + totalNoAll;
       const overallPositivity = grandTotalVotes > 0 ? ((totalYesAll / grandTotalVotes) * 100).toFixed(1) : 0;
 
@@ -270,39 +261,26 @@
       document.getElementById('kpiTotalVotes').innerText = grandTotalVotes;
       document.getElementById('kpiPositivity').innerText = `${overallPositivity}%`;
 
-      // Update Chart
       chartInstance.data.datasets[0].data = yesArr;
       chartInstance.data.datasets[1].data = noArr;
       chartInstance.update();
     });
 
-    // ================= سيناريو حركات الشخصية الموقوتة =================
+    // ================= سيناريو حركات الـ GIF المحدث =================
     
-    // 1. بعد دقيقة (60 ثانية): يظهر من اليمين ويؤشر لمدة 5 ثوانٍ ثم يختفي
+    // 1. بعد 30 ثانية: تظهر الشخصية الأولى من اليمين لمدة 5 ثوانٍ ثم تختفي
     setTimeout(() => {
-      const mascotRight = document.getElementById('mascotRight');
-      mascotRight.classList.add('show-wave');
+      const gifRight = document.getElementById('gifRight');
+      gifRight.classList.add('show');
+      setTimeout(() => gifRight.classList.remove('show'), 5000);
+    }, 30000);
 
-      setTimeout(() => {
-        mascotRight.classList.remove('show-wave');
-      }, 5000);
+    // 2. بعد 30 ثانية أخرى (عند الدقيقة 1:00): تظهر الشخصية الثانية من اليسار لمدة 5 ثوانٍ ثم تختفي
+    setTimeout(() => {
+      const gifLeft = document.getElementById('gifLeft');
+      gifLeft.classList.add('show');
+      setTimeout(() => gifLeft.classList.remove('show'), 5000);
     }, 60000);
-
-    // 2. بعد 20 ثانية إضافية (عند الدقيقة 1:20): يظهر من اليسار ويؤشر لمدة 5 ثوانٍ ثم يختفي
-    setTimeout(() => {
-      const mascotLeft = document.getElementById('mascotLeft');
-      mascotLeft.classList.add('show-wave');
-
-      setTimeout(() => {
-        mascotLeft.classList.remove('show-wave');
-      }, 5000);
-    }, 80000);
-
-    // 3. بعد دقيقة كاملة إضافية (عند الدقيقة 2:20): يجري من اليسار إلى اليمين عبر الشاشة بالكامل
-    setTimeout(() => {
-      const mascotRunner = document.getElementById('mascotRunner');
-      mascotRunner.classList.add('run-across');
-    }, 140000);
 
   </script>
 </body>
